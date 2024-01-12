@@ -26,8 +26,8 @@ fn record_is_double_clipped(rec: &Record, w: usize) -> bool {
         return false;
     }
     let fst = &cigar[0];
-    let lst = &cigar[n-1];
-    if fst.kind()  == Kind::SoftClip && lst.kind() == Kind::SoftClip {
+    let lst = &cigar[n - 1];
+    if fst.kind() == Kind::SoftClip && lst.kind() == Kind::SoftClip {
         return fst.len() >= w && lst.len() >= w;
     }
     false
@@ -63,6 +63,7 @@ fn main() -> std::io::Result<()> {
         None
     };
 
+    let mut chrom = String::new();
     for rec_res in reader.records(&hdr) {
         let rec = rec_res?;
         i += 1;
@@ -72,9 +73,16 @@ fn main() -> std::io::Result<()> {
         }
         writer.write_record(&hdr, &rec)?;
         if let Some(pb) = &mpb {
-            pb.tick();
-            if (i & 0xffff) == 0 {
-                pb.set_message(format!("after {} records, {} filtered", i, j));
+            if (i & 0xff) == 0 {
+                pb.tick();
+                if (i & 0xffff) == 0 {
+                    if let Some(ref_res) = rec.reference_sequence(&hdr) {
+                        let ref_name = ref_res?;
+                        chrom = ref_name.0.to_string();
+                    }
+
+                    pb.set_message(format!("after {} records, {} filtered ({})", i, j, chrom));
+                }
             }
         }
     }
