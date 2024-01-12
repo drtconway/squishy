@@ -21,10 +21,14 @@ use noodles::{
 
 fn record_is_double_clipped(rec: &Record, w: usize) -> bool {
     let cigar = rec.cigar();
-    let parts = Vec::from_iter(cigar.iter());
-    let n = parts.len();
-    if n > 2 && parts[0].kind() == Kind::SoftClip && parts[n - 1].kind() == Kind::SoftClip {
-        return parts[0].len() >= w && parts[n - 1].len() >= w;
+    let n = cigar.len();
+    if n < 3 {
+        return false;
+    }
+    let fst = &cigar[0];
+    let lst = &cigar[n-1];
+    if fst.kind()  == Kind::SoftClip && lst.kind() == Kind::SoftClip {
+        return fst.len() >= w && lst.len() >= w;
     }
     false
 }
