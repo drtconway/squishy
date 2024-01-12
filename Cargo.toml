@@ -9,3 +9,7 @@ edition = "2021"
 docopt = "1.1.1"
 indicatif = "0.17.7"
 noodles = { version = "0.60.0", features = ["core", "bam", "sam"] }
+flate2 = { version = "1.0.28", default-features = false, features = ["zlib-ng-compat"] }
+
+[profile.release]
+debug = true
