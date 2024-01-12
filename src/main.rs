@@ -37,7 +37,7 @@ fn main() -> std::io::Result<()> {
     let args = Docopt::new(USAGE)
         .and_then(|dopt| dopt.parse())
         .unwrap_or_else(|e| e.exit());
-    eprintln!("{:?}", args);
+    //eprintln!("{:?}", args);
     let src = args.get_str("<src-bam>");
     let dst = args.get_str("<dest-bam>");
     let w: usize = args.get_str("-w").parse().unwrap();
